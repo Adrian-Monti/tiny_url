@@ -1,0 +1,26 @@
+language: ruby
+rvm:
+- 2.0.0
+bundler_args: "--without production"
+addons:
+  postgresql: '9.3'
+services:
+- postgresql
+before_script:
+- cp config/database.yml.travis config/database.yml
+- psql -c 'create database travis_ci_test;' -U postgres
+- RAILS_ENV=test bundle exec rake db:migrate --trace
+script:
+- bundle exec rspec
+notifications:
+  email:
+    on_success: always
+    on_failure: always
+deploy:
+  provider: heroku
+  api_key:
+    secure: c+dBVF2TlAuOmOtR7YM0JG85KHcjhT1xmXLRFXBp6FFzMqoy1dHSHs7R8ymbGNvgkxlBqVzsdG6Ah7u5q36Q7oWp0+EljSakSNxm6vPNcX+z/ESXx35qCxJj6/lKVuSEW/1k1hYcDpXiDO0GwOQCotuCL+QeSoZtFNXnJTCCzprtmTDBULzx15BudXM4rsyxaE8lOSvrW+Gn7GLnppTkPtCizH3dszyAOSmHbgVmHoXmLasSQh/s3CsPnCvDCe+4PNvllwfSdILhXGs7uW5jcV65mduymBPwaf47pPTARUEFTtctkkUnnazZIo4D3bgbsa6YN8bqO2Y4cuZPzk/JCexCFCNg/GnbPxPfGvjBg8xvoNVp7o3n1V1G6EgfU/oI6cGRLhmLDFrHk3rhoaqd85aI+E+CkeWXEQFrbIt2G8Re9gGFYrTm6N637bcaHfbuBZDqHKanzWCtLSEHA9hFmF3rm/Id52En75Tk5pr3Bqwjf0vgGv3/qIzPcERGPPlAz0sA9k5fo586eQ7Y2Ql7bjHQVVrX/uWTOFdkDjan13Sv5F2/jBUrIz7R8p8Ky974UDDpZJirGlUcHcq7P1pJskRp5B4FsavjJDgbfI52LZNCe4WrQYEGXILSB6ZlgCV7YCqFny5KoL2QZz8Bv7c59uUoS/2GXzSdRDff94uvxy0=
+  app: immense-ridge-89779
+  run: "rake db:migrate"
+  on:
+    repo: Adrian-Monti/tiny_url
